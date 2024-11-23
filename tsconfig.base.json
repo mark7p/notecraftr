@@ -1,0 +1,24 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@notecraftr/note-buildr": ["lib/note-buildr/src/index.ts"],
+      "@notecraftr/shared-ui": ["lib/shared-ui/src/index.ts"],
+      "@notecraftr/buildr-gd": ["lib/note-buildr/src/lib/godot"],
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,43 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="buildr_gd"
+run/main_scene="res://scenes/main/main.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+run/low_processor_mode=true
+boot_splash/show_image=false
+boot_splash/fullsize=false
+boot_splash/use_filter=false
+
+[display]
+
+window/energy_saving/keep_screen_on=false
+
+[global_group]
+
+static_sections=""
+sections=""
+disabled_sections=""
+selected_sections=""
+
+[physics]
+
+2d/physics_engine="GodotPhysics2D"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+reflections/sky_reflections/texture_array_reflections=false
+camera/depth_of_field/depth_of_field_bokeh_shape=0
+environment/defaults/default_clear_color=Color(0.942823, 0.942823, 0.942823, 1)

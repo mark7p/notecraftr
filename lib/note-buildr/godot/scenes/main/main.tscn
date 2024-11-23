@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqvd5ib6w23il"]
+
+[ext_resource type="Script" path="res://scenes/main/main.gd" id="1_aixmb"]
+[ext_resource type="Script" path="res://scenes/main/camera.gd" id="1_x67nu"]
+[ext_resource type="PackedScene" uid="uid://ckkkqtiy7pask" path="res://scenes/section/Section.tscn" id="1_yopc4"]
+
+[node name="main" type="Node2D"]
+script = ExtResource("1_aixmb")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.5, 0.5)
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+script = ExtResource("1_x67nu")
+min_zoom = Vector2(0.3, 0.3)
+max_zoom = Vector2(1, 1)
+
+[node name="Section" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
+process_mode = 1
+position = Vector2(405, 318)
+camera = NodePath("../Camera2D")
+speed = 0.2
+
+[node name="Section2" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
+position = Vector2(237, -328)
+camera = NodePath("../Camera2D")
+speed = 0.2
+
+[node name="Section3" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
+position = Vector2(-332, 81)
+camera = NodePath("../Camera2D")
+speed = 0.2

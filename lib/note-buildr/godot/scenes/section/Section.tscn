@@ -1,0 +1,83 @@
+[gd_scene load_steps=8 format=3 uid="uid://ckkkqtiy7pask"]
+
+[ext_resource type="Script" path="res://scenes/section/section.gd" id="1_7epej"]
+[ext_resource type="Script" path="res://scenes/section/canvas.gd" id="2_dt3xl"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yomf4"]
+radius = 100.0
+
+[sub_resource type="Animation" id="Animation_7sfcn"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Canvas:border_radius")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_gp0ra"]
+resource_name = "mouse_in"
+length = 0.2
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Canvas:border_radius")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, 0, 0, 0, 0, 0.2, -0.125, 0.2, 0.135, 0),
+"times": PackedFloat32Array(0, 0.2)
+}
+
+[sub_resource type="Animation" id="Animation_kdid8"]
+resource_name = "mouse_out"
+length = 0.4
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Canvas:border_radius")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0.2, 0, 0, 0, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_di4kk"]
+_data = {
+"RESET": SubResource("Animation_7sfcn"),
+"mouse_in": SubResource("Animation_gp0ra"),
+"mouse_out": SubResource("Animation_kdid8")
+}
+
+[node name="Section" type="RigidBody2D" groups=["sections", "static_sections"]]
+input_pickable = true
+gravity_scale = 0.0
+center_of_mass_mode = 1
+sleeping = true
+lock_rotation = true
+linear_damp = 10.0
+angular_damp = 100.0
+script = ExtResource("1_7epej")
+speed = null
+
+[node name="Canvas" type="Node2D" parent="."]
+script = ExtResource("2_dt3xl")
+circle_color = Color(0.230987, 0.274796, 0.913119, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_yomf4")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_di4kk")
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="."]

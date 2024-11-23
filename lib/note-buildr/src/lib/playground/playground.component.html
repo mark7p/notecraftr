@@ -1,0 +1,13 @@
+<div class="main-container flex flex-col items-center bg-slate-300 h-screen w-screen p-4">
+    <textarea #mytext name="" id=""></textarea>
+    <button (click)="callGodotFunction(mytext.value)">Send to godot</button>
+    <button (click)="checkwindow()">Check window</button>
+    <iframe
+        #gdframe
+        src="buildr_gd.html" 
+        id="godot-game" 
+        width="800" 
+        height="600" 
+        frameborder="0">
+    </iframe>
+</div>

@@ -1,0 +1,10 @@
+{
+  "name": "desktop-frontend-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/desktop-frontend-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["desktop-frontend"],
+  "// targets": "to see all targets run: nx show project desktop-frontend-e2e --web",
+  "targets": {}
+}
