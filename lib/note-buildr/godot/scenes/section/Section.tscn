@@ -63,21 +63,20 @@ gravity_scale = 0.0
 center_of_mass_mode = 1
 sleeping = true
 lock_rotation = true
-linear_damp = 10.0
+contact_monitor = true
+max_contacts_reported = 8
+linear_damp = 5.0
 angular_damp = 100.0
 script = ExtResource("1_7epej")
-speed = null
-
-[node name="Canvas" type="Node2D" parent="."]
-script = ExtResource("2_dt3xl")
-circle_color = Color(0.230987, 0.274796, 0.913119, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_yomf4")
+
+[node name="Canvas" type="Node2D" parent="."]
+script = ExtResource("2_dt3xl")
+circle_color = Color(0.991264, 0.734497, 0.0756874, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_di4kk")
 }
-
-[node name="Polygon2D" type="Polygon2D" parent="."]

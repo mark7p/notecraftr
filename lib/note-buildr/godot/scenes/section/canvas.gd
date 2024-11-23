@@ -1,5 +1,6 @@
 @tool
 extends Node2D 
+class_name SectionCanvas
 
 # Circle properties
 @export var circle_radius: float = 100.0:
