@@ -1,50 +1,110 @@
 @tool
 extends RigidBody2D
-# class_name Section
+
+class_name Section
 
 const Types := preload ("res://global/types.gd")
-
-var drag_offset = Vector2()
-var is_mouse_dragging = false
-var is_mouse_hover = false
-var grid_size: float = 100  # Grid size matches the circle diameter
-var physics_impulse_multiplier = 100
-signal on_select(node)
-signal on_blur(node)
-var sections_dragged = false
+@export var body_canvas: NodeBodyCanvas
+@export var collision_shape: NodeBodyCollisionShape
+@export var io_bubbles: Array[IOBubble]
+@export var camera: Camera2D
+@export var state: Types.SectionState = Types.SectionState.NORMAL
+var drag_offset = Vector2.ZERO
+var body_mouse_hover = false
 var touched = false
 var dragged = false
-var initial_press_position
-@export var state: Types.SectionState = Types.SectionState.NORMAL
-@export var camera: Camera2D
-
-@onready var canvas: SectionCanvas = get_node("Canvas")
-@onready var collision_shape: CollisionShape2D = get_node("CollisionShape2D")
-@onready var animation_player: AnimationPlayer = get_node("AnimationPlayer")
+var physics_impulse_multiplier = 50
+var bubbles_mouse_hover = false
 
 
 func _ready() -> void:
-	collision_shape.shape.radius = canvas.circle_radius
-	grid_size = 2 * canvas.circle_radius
-	connect("body_entered", on_body_entered)
+	# CANVAS
+	# Set canvas color, bypass animation
+	var random_color = Color(randf_range(0.3,1),randf_range(0.3,1),randf_range(0.3,1))
+	_update_all_canvas(func(c): c._set_circle_color(random_color))
+	_update_all_canvas(func(c): c.color = random_color)
+	_update_canvas()
 
-	# TO REMOVE
-	canvas.circle_color = Color(randf_range(0.3,1),randf_range(0.3,1),randf_range(0.3,1))
+	body_entered.connect(_on_body_entered)
 
-func _process(delta: float) -> void:
+	# BUBBLES
+	for bubble in io_bubbles:
+		bubble.mouse_enter_canvas.connect(_bubbles_canvas_mouse_enter)
+		bubble.mouse_exit_canvas.connect(_bubbles_canvas_mouse_exit)
+		bubble.mouse_activity.connect(_bubbles_mouse_activity)
+
+
+func _update_all_canvas(callback: Callable):
+	callback.call(body_canvas)
+	for bubble in io_bubbles:
+		callback.call(bubble.canvas)
+
+
+func _update_canvas():
+	match state:
+		Types.SectionState.DISABLED:
+			_update_all_canvas(func(c): c.disabled = true)
+		Types.SectionState.SELECTED:
+			_update_all_canvas(func(c): c.focused = true)
+		_:
+			pass
+
+
+func _bubbles_mouse_activity(_viewport: Node, _event: InputEvent, _shape_idx: int):
 	pass
+	# print(_event)
+	# _update_all_canvas(func(c): c.focused = true)
+
+
+
+func _bubbles_canvas_mouse_enter():
+	# bubbles_mouse_hover = true
+	# print("bubble enter")
+	bubbles_mouse_hover = true
+	if not body_mouse_hover:
+		_update_all_canvas(func(c): c.focused = true)
+
+
+func _bubbles_canvas_mouse_exit():
+	# if not body_mouse_hover:
+	# print("bubble exit")
+	bubbles_mouse_hover = false
+	if state != Types.SectionState.SELECTED:
+		if not body_mouse_hover:
+			_update_all_canvas(func(c): c.focused = false)
+
+
+func _on_mouse_enter():
+	# print("body enter")
+	body_mouse_hover = true
+	if not bubbles_mouse_hover:
+		_update_all_canvas(func(c): c.focused = true)
+
+
+func _on_mouse_exit():
+	# print("body exit")
+	if state != Types.SectionState.SELECTED:
+		if not bubbles_mouse_hover:
+			_update_all_canvas(func(c): c.focused = false)
+
+	body_mouse_hover = false
+
+
+func delete():
+	body_canvas.hidden.connect(queue_free)
+	_update_all_canvas(func(c): c.circle_visible = false)
 
 
 func select():
+	remove_from_group("selected_sections")
 	if state == Types.SectionState.DISABLED:
 		return
 
 	add_to_group("selected_sections")
 	freeze = true
 	state = Types.SectionState.SELECTED
-	on_select.emit(self)
-	if canvas.border_radius <= 0.1:
-		animation_player.play("mouse_in")
+	_update_all_canvas(func(c): c.focused = true)
+
 
 
 func deselect():
@@ -54,67 +114,29 @@ func deselect():
 	remove_from_group("selected_sections")
 	freeze = false
 	state = Types.SectionState.NORMAL
-	on_blur.emit(self)
-	if canvas.border_radius  > 0.1:
-		animation_player.play("mouse_out")
+	_update_all_canvas(func(c): c.focused = false)
 
 
-func focus_section():
-	animation_player.play("mouse_in")
-
-
-func blur_section():
-	animation_player.play("mouse_out")
-
-
-func _on_mouse_enter():
-	if state == Types.SectionState.DISABLED:
-		return
-		
-	if dragged:
-		return
-
-	# if not get_parent().is_mouse_dragging:
-	is_mouse_hover = true
-	focus_section()
-
-
-func _on_mouse_exit():
-	if state == Types.SectionState.DISABLED:
-		return
-
-	is_mouse_hover = false
-
-	if state == Types.SectionState.SELECTED:
-		return
-
-	if state == Types.SectionState.NORMAL:
-		if touched:
-			return
-
-	blur_section()
-
-
-func on_body_entered(node):
+func _on_body_entered(node):
 	if node.is_in_group("sections"):
 		var impulse = (node.global_position - global_position).normalized()
 		if node.is_in_group("selected_sections"):
 			apply_central_impulse(-impulse * physics_impulse_multiplier)
 		else:
 			node.apply_central_impulse(impulse * physics_impulse_multiplier)
-		
+
 
 
 func _input(event):
 	if event is InputEventMouseButton:
-		if is_mouse_hover:
+		if body_mouse_hover:
 			if event.pressed:
 				touched = true
 		else:
 			if not dragged:
 				touched = false
 
-		if is_mouse_hover:
+		if body_mouse_hover:
 			if state == Types.SectionState.NORMAL:
 				if event.pressed and not event.ctrl_pressed:
 					if touched and event.button_index == MOUSE_BUTTON_LEFT:
@@ -136,6 +158,8 @@ func _input(event):
 				elif not event.pressed and event.ctrl_pressed:
 					if not dragged:
 						deselect()
+			if event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+				delete()
 		else:
 			if state == Types.SectionState.SELECTED and event.button_index == MOUSE_BUTTON_LEFT:
 				var selected_sections = get_tree().get_nodes_in_group("sections")
@@ -143,7 +167,7 @@ func _input(event):
 				for section in selected_sections:
 					if found_hovered:
 						continue
-					found_hovered = section.is_mouse_hover
+					found_hovered = section.body_mouse_hover
 
 				if not found_hovered:
 					deselect()
@@ -152,7 +176,7 @@ func _input(event):
 			
 
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			drag_offset = position - camera.get_global_mouse_position()
+			drag_offset = position - (camera.get_global_mouse_position() if camera else get_global_mouse_position())
 		
 		if not event.pressed:
 			dragged = false
@@ -160,11 +184,11 @@ func _input(event):
 			
 
 	if event is InputEventMouseMotion:
-		if (global_position - camera.get_global_mouse_position()).length() <= canvas.circle_radius:
-			if not is_mouse_hover:
+		if (global_position - (camera.get_global_mouse_position() if camera else get_global_mouse_position())).length() <= collision_shape.shape.radius * collision_shape.scale.x:
+			if not body_mouse_hover:
 				_on_mouse_enter()
 		else:
-			if is_mouse_hover:
+			if body_mouse_hover:
 				_on_mouse_exit()
 
 
@@ -175,29 +199,7 @@ func _input(event):
 
 	if event is InputEventMouseMotion and event.button_mask in [MOUSE_BUTTON_MASK_LEFT]:
 		if state == Types.SectionState.SELECTED:
-			global_position = camera.get_global_mouse_position() + drag_offset
-			# check_collision(event)
-
-
-
-func check_collision(event):
-	if is_mouse_dragging and event is InputEventMouseMotion:
-
-		# Check for collisions with other objects
-		var space_state = get_world_2d().direct_space_state
-		var query = PhysicsShapeQueryParameters2D.new()
-		query.shape = CircleShape2D.new()
-		query.shape.radius = canvas.circle_radius
-		query.transform.origin = global_position
-		query.collision_mask = collision_layer
-
-		var results = space_state.intersect_shape(query)
-		for result in results:
-			var other_body = result.collider as RigidBody2D
-			if other_body:
-				var impulse = (other_body.global_position - global_position).normalized()
-				other_body.apply_central_impulse(impulse * physics_impulse_multiplier)
-
+			global_position = (camera.get_global_mouse_position() if camera else get_global_mouse_position()) + drag_offset
 
 
 

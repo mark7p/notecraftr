@@ -44,4 +44,4 @@ camera/depth_of_field/depth_of_field_bokeh_shape=0
 environment/ssao/quality=0
 environment/ssil/quality=0
 environment/glow/upscale_mode=0
-environment/defaults/default_clear_color=Color(0.942823, 0.942823, 0.942823, 1)
+environment/defaults/default_clear_color=Color(0.476192, 0.520715, 0.591879, 1)

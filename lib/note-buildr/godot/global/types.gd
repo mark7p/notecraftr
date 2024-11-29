@@ -3,3 +3,9 @@ enum SectionState {
     DISABLED,
     SELECTED,
 }
+
+enum BubblePosition {
+	LEFT,
+	RIGHT,
+	UNDEFINED
+}

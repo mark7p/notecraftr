@@ -9,59 +9,44 @@
 script = ExtResource("1_aixmb")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(0.5, 0.5)
+zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("1_x67nu")
-min_zoom = Vector2(0.3, 0.3)
-max_zoom = Vector2(1, 1)
 
 [node name="Background" type="Node2D" parent="." node_paths=PackedStringArray("camera")]
 script = ExtResource("4_d7im4")
 horizontal_line_color = Color(0.990563, 0.767267, 0.850344, 1)
 vertical_line_color = Color(0.855427, 0.839459, 0.880372, 1)
 background_color = Color(0.978213, 0.943395, 0.980917, 1)
+line_width = 1.0
+horizontal_spacing = 25
+vertical_spacing = 25
 camera = NodePath("../Camera2D")
 
-[node name="Section" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(-264, -254)
-camera = NodePath("../Camera2D")
+[node name="Section" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(-178, -102)
 
-[node name="Section2" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-camera = NodePath("../Camera2D")
+[node name="Section2" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(-44, 99)
 
-[node name="Section3" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(-575, 356)
-camera = NodePath("../Camera2D")
+[node name="Section3" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(67, 88)
 
-[node name="Section4" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(561, 343)
-camera = NodePath("../Camera2D")
+[node name="Section4" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(216, -72)
 
-[node name="Section5" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(-485, -75)
-camera = NodePath("../Camera2D")
+[node name="Section5" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(168, 28)
 
-[node name="Section6" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(63, -387)
-camera = NodePath("../Camera2D")
+[node name="Section6" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(64, -126)
 
-[node name="Section7" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(507, -32)
-camera = NodePath("../Camera2D")
+[node name="Section7" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(-219, 31)
 
-[node name="Section8" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(-94, 318)
-camera = NodePath("../Camera2D")
+[node name="Section8" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(-80, 15)
 
-[node name="Section9" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(242, -221)
-camera = NodePath("../Camera2D")
-
-[node name="Section10" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(-359, 156)
-camera = NodePath("../Camera2D")
-
-[node name="Section11" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("1_yopc4")]
-position = Vector2(310, 181)
-camera = NodePath("../Camera2D")
+[node name="Section9" parent="." instance=ExtResource("1_yopc4")]
+position = Vector2(12, -34)

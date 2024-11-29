@@ -12,9 +12,6 @@ func _ready() -> void:
 	pass
 
 
-func _process(delta: float) -> void:
-	pass
-
 
 func _input(event):
 	update_mouse_drag(event)

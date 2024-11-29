@@ -17,7 +17,7 @@ func _ready():
 
 func _draw():
 	var camera_pos = camera.get_global_position()
-	var viewport_size = camera.get_viewport_rect().size / camera.zoom
+	var viewport_size := (camera.get_viewport_rect().size / camera.zoom) + Vector2(100, 100)
 
 	# Draw the background
 	draw_rect(Rect2(camera_pos - viewport_size / 2, viewport_size), background_color, true)
