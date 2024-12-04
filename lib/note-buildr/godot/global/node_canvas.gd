@@ -75,8 +75,9 @@ func _update_canvas():
 	var target_radius := radius if circle_visible else 0.0
 	var radius_changed := current_radius != target_radius
 
-	if (!color_changed and !border_changed and !radius_changed) or (!visible and !circle_visible):
+	if false or (!color_changed and !border_changed and !radius_changed) or (!visible and !circle_visible):
 		return
+	
 
 	if _tween:
 		_tween.kill()

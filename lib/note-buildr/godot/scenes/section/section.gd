@@ -15,14 +15,15 @@ var touched = false
 var dragged = false
 var physics_impulse_multiplier = 50
 var bubbles_mouse_hover = false
+var _canvas_update_tween: Tween
 
 
 func _ready() -> void:
 	# CANVAS
 	# Set canvas color, bypass animation
 	var random_color = Color(randf_range(0.3,1),randf_range(0.3,1),randf_range(0.3,1))
-	_update_all_canvas(func(c): c._set_circle_color(random_color))
-	_update_all_canvas(func(c): c.color = random_color)
+	_update_all_canvas(func(c): c._set_circle_color(random_color), false)
+	_update_all_canvas(func(c): c.color = random_color, false)
 	_update_canvas()
 
 	body_entered.connect(_on_body_entered)
@@ -34,10 +35,33 @@ func _ready() -> void:
 		bubble.mouse_activity.connect(_bubbles_mouse_activity)
 
 
-func _update_all_canvas(callback: Callable):
-	callback.call(body_canvas)
-	for bubble in io_bubbles:
-		callback.call(bubble.canvas)
+func _update_all_canvas(callback: Callable, delay = true):
+	# Create a tween delay to make sure all properties are set before update
+	var _updates = func():
+		callback.call(body_canvas)
+		for bubble in io_bubbles:
+			callback.call(bubble.canvas)
+	
+	if delay:
+		if _canvas_update_tween:
+			_canvas_update_tween.kill()
+		_canvas_update_tween = create_tween()
+		_canvas_update_tween.tween_callback(_updates).set_delay(0.05)
+	else:
+		_updates.call()
+
+	
+
+
+func _check_canvas_focus():
+	var _check_hover := func hello():
+		if bubbles_mouse_hover or body_mouse_hover or state:
+			_update_all_canvas(func(c): c.focused = true)
+		else:
+			_update_all_canvas(func(c): c.focused = false)
+	
+	var _tween = create_tween()
+	_tween.tween_callback(_check_hover).set_delay(0.1)
 
 
 func _update_canvas():
@@ -52,22 +76,17 @@ func _update_canvas():
 
 func _bubbles_mouse_activity(_viewport: Node, _event: InputEvent, _shape_idx: int):
 	pass
-	# print(_event)
-	# _update_all_canvas(func(c): c.focused = true)
+
 
 
 
 func _bubbles_canvas_mouse_enter():
-	# bubbles_mouse_hover = true
-	# print("bubble enter")
 	bubbles_mouse_hover = true
 	if not body_mouse_hover:
 		_update_all_canvas(func(c): c.focused = true)
 
 
 func _bubbles_canvas_mouse_exit():
-	# if not body_mouse_hover:
-	# print("bubble exit")
 	bubbles_mouse_hover = false
 	if state != Types.SectionState.SELECTED:
 		if not body_mouse_hover:
@@ -75,18 +94,15 @@ func _bubbles_canvas_mouse_exit():
 
 
 func _on_mouse_enter():
-	# print("body enter")
 	body_mouse_hover = true
 	if not bubbles_mouse_hover:
 		_update_all_canvas(func(c): c.focused = true)
 
 
 func _on_mouse_exit():
-	# print("body exit")
 	if state != Types.SectionState.SELECTED:
 		if not bubbles_mouse_hover:
 			_update_all_canvas(func(c): c.focused = false)
-
 	body_mouse_hover = false
 
 
