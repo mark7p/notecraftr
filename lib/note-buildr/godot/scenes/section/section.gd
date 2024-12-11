@@ -9,6 +9,13 @@ const Types := preload ("res://global/types.gd")
 @export var io_bubbles: Array[IOBubble]
 @export var camera: Camera2D
 @export var state: Types.SectionState = Types.SectionState.NORMAL
+@export var connected_to: Array[Section]:
+	set(value):
+		connected_to = value
+@export var connected_from: Array[Section]:
+	set(value):
+			connected_from = value
+
 var drag_offset = Vector2.ZERO
 var body_mouse_hover = false
 var touched = false
@@ -35,12 +42,20 @@ func _ready() -> void:
 		bubble.mouse_activity.connect(_bubbles_mouse_activity)
 
 
+func _connected_to_update():
+	pass
+
+
+func _connected_from_update():
+	pass
+
+
 func _update_all_canvas(callback: Callable, delay = true):
 	# Create a tween delay to make sure all properties are set before update
 	var _updates = func():
 		callback.call(body_canvas)
 		for bubble in io_bubbles:
-			callback.call(bubble.canvas)
+			callback.call(bubble.bubble_canvas)
 	
 	if delay:
 		if _canvas_update_tween:
@@ -54,7 +69,7 @@ func _update_all_canvas(callback: Callable, delay = true):
 
 
 func _check_canvas_focus():
-	var _check_hover := func hello():
+	var _check_hover := func():
 		if bubbles_mouse_hover or body_mouse_hover or state:
 			_update_all_canvas(func(c): c.focused = true)
 		else:
@@ -78,11 +93,31 @@ func _bubbles_mouse_activity(_viewport: Node, _event: InputEvent, _shape_idx: in
 	pass
 
 
+func _set_as_connection_candidate():
+	if Global.section_seaking_connection and Global.section_connection_candidate != self:
+		Global.section_connection_candidate = self
+		if Global.section_seaking_connection == self:
+			return
 
+		for bubble in io_bubbles:
+			if bubble.type == Types.BubbleType.OUTPUT and not bubble.connected:
+				bubble.bubble_look_at(Global.section_seaking_connection.global_position)
+	
+
+func _remove_as_connection_candidate():
+	if Global.section_seaking_connection and Global.section_connection_candidate == self:
+		Global.section_connection_candidate = null
+		if Global.section_seaking_connection == self:
+			return
+
+		for bubble in io_bubbles:
+			if bubble.type == Types.BubbleType.OUTPUT and not bubble.connected:
+				bubble.request_reset_position()
 
 func _bubbles_canvas_mouse_enter():
 	bubbles_mouse_hover = true
 	if not body_mouse_hover:
+		_set_as_connection_candidate()
 		_update_all_canvas(func(c): c.focused = true)
 
 
@@ -90,18 +125,21 @@ func _bubbles_canvas_mouse_exit():
 	bubbles_mouse_hover = false
 	if state != Types.SectionState.SELECTED:
 		if not body_mouse_hover:
+			_remove_as_connection_candidate()
 			_update_all_canvas(func(c): c.focused = false)
 
 
 func _on_mouse_enter():
 	body_mouse_hover = true
 	if not bubbles_mouse_hover:
+		_set_as_connection_candidate()
 		_update_all_canvas(func(c): c.focused = true)
 
 
 func _on_mouse_exit():
 	if state != Types.SectionState.SELECTED:
 		if not bubbles_mouse_hover:
+			_remove_as_connection_candidate()
 			_update_all_canvas(func(c): c.focused = false)
 	body_mouse_hover = false
 
@@ -195,6 +233,10 @@ func _input(event):
 			drag_offset = position - (camera.get_global_mouse_position() if camera else get_global_mouse_position())
 		
 		if not event.pressed:
+			if Global.section_connection_candidate == self:
+				_remove_as_connection_candidate()
+			if Global.section_seaking_connection == self:
+				Global.section_seaking_connection = null
 			dragged = false
 			touched = false
 			

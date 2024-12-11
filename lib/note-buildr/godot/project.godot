@@ -11,13 +11,17 @@ config_version=5
 [application]
 
 config/name="buildr_gd"
-run/main_scene="res://scenes/main/main.tscn"
+run/main_scene="res://scenes/section/Section.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
 boot_splash/show_image=false
 boot_splash/fullsize=false
 boot_splash/use_filter=false
+
+[autoload]
+
+Global="*res://global/global.gd"
 
 [display]
 
@@ -36,12 +40,13 @@ selected_sections=""
 
 [rendering]
 
-textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 reflections/sky_reflections/texture_array_reflections=false
+textures/default_filters/anisotropic_filtering_level=0
 camera/depth_of_field/depth_of_field_bokeh_shape=0
 environment/ssao/quality=0
 environment/ssil/quality=0
 environment/glow/upscale_mode=0
+environment/volumetric_fog/use_filter=0
 environment/defaults/default_clear_color=Color(0.476192, 0.520715, 0.591879, 1)

@@ -9,3 +9,8 @@ enum BubblePosition {
 	RIGHT,
 	UNDEFINED
 }
+
+enum BubbleType {
+	INPUT,
+    OUTPUT
+}

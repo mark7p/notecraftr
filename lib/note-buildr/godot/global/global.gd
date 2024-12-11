@@ -2,6 +2,8 @@ extends Node
 
 signal on_frontend_message(data)
 signal send_to_frontend(data)
+var section_seaking_connection: Section
+var section_connection_candidate: Section
 
 var _callback_ref = JavaScriptBridge.create_callback(_message_handler)
 

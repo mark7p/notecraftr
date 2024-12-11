@@ -8,6 +8,7 @@ var max_border := 0.1
 var _tween: Tween = null
 
 signal on_radius_change(value: float)
+signal on_color_change(value: Color)
 
 @export var circle_visible := true:
 	set(value):
@@ -32,6 +33,7 @@ signal on_radius_change(value: float)
 		if color != value:
 			color = value
 			_update_canvas()
+			on_color_change.emit(value)
 		
 @export var disabled_color := Color.GRAY:
 	set(value):
@@ -98,14 +100,10 @@ func _update_canvas():
 		).set_ease(Tween.EASE_IN if target_radius == 0.0 else Tween.EASE_OUT
 		).set_trans(Tween.TransitionType.TRANS_SPRING)
 		if target_radius == 0.0:
-			_tween.tween_callback(_on_hide).set_delay(animation_duration)
+			_tween.tween_callback(func():visible = false).set_delay(animation_duration)
 		elif visible == false:
 			visible = true
 
-
-
-func _on_hide():
-	visible = false
 
 
 func _on_disable():
