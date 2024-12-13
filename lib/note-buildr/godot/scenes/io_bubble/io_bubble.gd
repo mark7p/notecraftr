@@ -115,7 +115,6 @@ func _input(event: InputEvent) -> void:
 					connection_canvas.length = target_length - 10 # offset 0.12 radius = 12 - 2 so it wont show gap
 					connection_canvas.output_color = connection_canvas.input_color
 
-
 	elif event is InputEventMouseButton:
 		var is_pressed = event.pressed
 		var is_left = event.button_index == MOUSE_BUTTON_LEFT

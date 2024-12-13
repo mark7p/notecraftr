@@ -3,17 +3,17 @@
 [ext_resource type="Shader" path="res://shaders/node_body.gdshader" id="1_knquo"]
 [ext_resource type="Script" path="res://scenes/node_body_canvas/node_body_canvas.gd" id="2_0uwr2"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_70h5j"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_leebo"]
 shader = ExtResource("1_knquo")
-shader_parameter/circle_radius = 0.3
-shader_parameter/circle_border = 0.05
+shader_parameter/circle_radius = 0.0
+shader_parameter/circle_border = 0.0
 shader_parameter/circle_color = Color(1, 1, 1, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_hga0n"]
 size = Vector2(100, 100)
 
 [node name="NodeBodyCanvas" type="MeshInstance2D"]
-material = SubResource("ShaderMaterial_70h5j")
+material = SubResource("ShaderMaterial_leebo")
 mesh = SubResource("QuadMesh_hga0n")
 script = ExtResource("2_0uwr2")
 focused = true

@@ -4,9 +4,6 @@ uniform float circle_border : hint_range(0.0, 0.1) = 0.05;
 uniform vec4 circle_color : source_color = vec4(1.0);
 const vec2 center = vec2(0.5, 0.5);
 
-void vertex() {
-	// Called for every vertex the material is visible on.
-}
 
 void fragment() {
 	float distance = length(center - UV);

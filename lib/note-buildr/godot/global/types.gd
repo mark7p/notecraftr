@@ -14,3 +14,9 @@ enum BubbleType {
 	INPUT,
     OUTPUT
 }
+
+enum IOType {
+	INPUT,
+    OUTPUT
+}
+

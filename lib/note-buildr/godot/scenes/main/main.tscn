@@ -16,9 +16,9 @@ script = ExtResource("1_x67nu")
 
 [node name="Background" type="Node2D" parent="." node_paths=PackedStringArray("camera")]
 script = ExtResource("4_d7im4")
-horizontal_line_color = Color(0.990563, 0.767267, 0.850344, 1)
-vertical_line_color = Color(0.855427, 0.839459, 0.880372, 1)
-background_color = Color(0.978213, 0.943395, 0.980917, 1)
+horizontal_line_color = Color(0.763613, 0.744215, 0.87312, 1)
+vertical_line_color = Color(0.762103, 0.737203, 0.800331, 1)
+background_color = Color(0.781132, 0.78444, 0.783622, 1)
 line_width = 1.0
 horizontal_spacing = 25
 vertical_spacing = 25
