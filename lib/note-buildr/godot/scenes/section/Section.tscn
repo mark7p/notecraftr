@@ -1,63 +1,62 @@
-[gd_scene load_steps=8 format=3 uid="uid://ckkkqtiy7pask"]
+[gd_scene load_steps=13 format=3 uid="uid://ckkkqtiy7pask"]
 
 [ext_resource type="Script" path="res://scenes/section/section.gd" id="1_7epej"]
-[ext_resource type="Script" path="res://scenes/section/canvas.gd" id="2_dt3xl"]
+[ext_resource type="Shader" path="res://shaders/node_body.gdshader" id="3_avwsj"]
+[ext_resource type="Script" path="res://scenes/node_body_canvas/node_body_canvas.gd" id="4_d6jhk"]
+[ext_resource type="PackedScene" uid="uid://xix5w48m31a2" path="res://scenes/node_body_collision_shape/node_body_collision_shape.tscn" id="4_xh6ji"]
+[ext_resource type="PackedScene" uid="uid://bmbolgca8cseq" path="res://scenes/io_bubble/io_bubble.tscn" id="5_3t0ym"]
+[ext_resource type="Shader" path="res://shaders/io_bubble_connection.gdshader" id="6_1633q"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_yomf4"]
-radius = 100.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_pejap"]
+resource_local_to_scene = true
+radius = 30.0
 
-[sub_resource type="Animation" id="Animation_7sfcn"]
-length = 0.001
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Canvas:border_radius")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1c8jh"]
+shader = ExtResource("3_avwsj")
+shader_parameter/circle_radius = 0.3
+shader_parameter/circle_border = 0.0
+shader_parameter/circle_color = Color(0.783213, 0.996071, 0.875464, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_2w5ss"]
+size = Vector2(100, 100)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q6uhl"]
+shader = ExtResource("6_1633q")
+shader_parameter/scale = Vector2(0, 10)
+shader_parameter/line_input_color = Color(0.783213, 0.996071, 0.875464, 1)
+shader_parameter/line_output_color = Color(1, 1, 1, 1)
+shader_parameter/line_width = 0.5
+shader_parameter/dash_spacing = 0.345
+shader_parameter/dash_length = 2.513
+
+[sub_resource type="Shader" id="Shader_6nora"]
+code = "shader_type canvas_item;
+
+uniform float circle_radius : hint_range(0.0, 0.4) = 0.3;
+uniform float circle_border : hint_range(0.0, 0.1) = 0.05;
+uniform vec4 circle_color : source_color = vec4(1.0);
+const vec2 center = vec2(0.5, 0.5);
+
+void fragment() {
+    float distance = length(center - UV);
+    if (distance < circle_radius) {
+		COLOR = circle_color;
+    } else if (distance < circle_radius + circle_border && distance > circle_radius) {
+		COLOR = circle_color * vec4(1.0, 1.0, 1.0, 0.5);
+	}
+	 else {
+		discard;
+	}
 }
+"
 
-[sub_resource type="Animation" id="Animation_gp0ra"]
-resource_name = "mouse_in"
-length = 0.2
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Canvas:border_radius")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, 0, 0, 0, 0, 0.2, -0.125, 0.2, 0.135, 0),
-"times": PackedFloat32Array(0, 0.2)
-}
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b0jyp"]
+shader = SubResource("Shader_6nora")
+shader_parameter/circle_radius = 0.12
+shader_parameter/circle_border = 0.0
+shader_parameter/circle_color = Color(0.783213, 0.996071, 0.875464, 1)
 
-[sub_resource type="Animation" id="Animation_kdid8"]
-resource_name = "mouse_out"
-length = 0.4
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Canvas:border_radius")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0.2, 0, 0, 0, 0, 0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.4)
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_di4kk"]
-_data = {
-"RESET": SubResource("Animation_7sfcn"),
-"mouse_in": SubResource("Animation_gp0ra"),
-"mouse_out": SubResource("Animation_kdid8")
-}
-
-[node name="Section" type="RigidBody2D" groups=["sections", "static_sections"]]
+[node name="Section" type="RigidBody2D" node_paths=PackedStringArray("body_canvas", "collision_shape", "io_bubbles", "camera") groups=["sections", "static_sections"]]
 input_pickable = true
 gravity_scale = 0.0
 center_of_mass_mode = 1
@@ -68,15 +67,44 @@ max_contacts_reported = 8
 linear_damp = 5.0
 angular_damp = 100.0
 script = ExtResource("1_7epej")
+body_canvas = NodePath("NodeBodyCanvas")
+collision_shape = NodePath("NodeBodyCollisionShape")
+io_bubbles = [NodePath("IOBubble"), NodePath("IOBubble2")]
+camera = NodePath("Camera2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_yomf4")
+[node name="NodeBodyCollisionShape" parent="." node_paths=PackedStringArray("canvas") instance=ExtResource("4_xh6ji")]
+scale = Vector2(1, 1)
+shape = SubResource("CircleShape2D_pejap")
+canvas = NodePath("../NodeBodyCanvas")
 
-[node name="Canvas" type="Node2D" parent="."]
-script = ExtResource("2_dt3xl")
-circle_color = Color(0.991264, 0.734497, 0.0756874, 1)
+[node name="NodeBodyCanvas" type="MeshInstance2D" parent="."]
+material = SubResource("ShaderMaterial_1c8jh")
+mesh = SubResource("QuadMesh_2w5ss")
+script = ExtResource("4_d6jhk")
+color = Color(0.783213, 0.996071, 0.875464, 1)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_di4kk")
-}
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(3, 3)
+
+[node name="IOBubble" parent="." node_paths=PackedStringArray("section_body_canvas", "section_body_collision_shape") instance=ExtResource("5_3t0ym")]
+section_body_canvas = NodePath("../NodeBodyCanvas")
+section_body_collision_shape = NodePath("../NodeBodyCollisionShape")
+
+[node name="IOBubble2" parent="." node_paths=PackedStringArray("section_body_canvas", "section_body_collision_shape") instance=ExtResource("5_3t0ym")]
+rotation = 3.14159
+section_body_canvas = NodePath("../NodeBodyCanvas")
+section_body_collision_shape = NodePath("../NodeBodyCollisionShape")
+type = 1
+
+[node name="container" parent="IOBubble2/pivot" index="0"]
+position = Vector2(40, 0)
+
+[node name="ConnectionCanvas" parent="IOBubble2/pivot/container" index="1"]
+material = SubResource("ShaderMaterial_q6uhl")
+input_color = Color(0.783213, 0.996071, 0.875464, 1)
+
+[node name="BubbleCanvas" parent="IOBubble2/pivot/container" index="2"]
+material = SubResource("ShaderMaterial_b0jyp")
+color = Color(0.783213, 0.996071, 0.875464, 1)
+
+[editable path="IOBubble2"]

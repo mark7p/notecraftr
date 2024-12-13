@@ -7,13 +7,11 @@ var is_mouse_hover = false
 @onready var background: Background = get_node("Background")
 
 
+
 func _ready() -> void:
 	# connect("child_order_changed", _check_sections)
 	pass
 
-
-func _process(delta: float) -> void:
-	pass
 
 
 func _input(event):
