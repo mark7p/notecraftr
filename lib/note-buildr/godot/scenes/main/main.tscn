@@ -2,51 +2,51 @@
 
 [ext_resource type="Script" path="res://scenes/main/main.gd" id="1_aixmb"]
 [ext_resource type="Script" path="res://scenes/main/camera.gd" id="1_x67nu"]
-[ext_resource type="PackedScene" uid="uid://ckkkqtiy7pask" path="res://scenes/section/Section.tscn" id="1_yopc4"]
 [ext_resource type="Script" path="res://scenes/main/background.gd" id="4_d7im4"]
+[ext_resource type="PackedScene" uid="uid://brop00a6d1wi7" path="res://scenes/n_node/n_node.tscn" id="5_p1juv"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_aixmb")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(2, 2)
+zoom = Vector2(4, 4)
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("1_x67nu")
+min_zoom = Vector2(3, 3)
+max_zoom = Vector2(7, 7)
 
 [node name="Background" type="Node2D" parent="." node_paths=PackedStringArray("camera")]
 script = ExtResource("4_d7im4")
-horizontal_line_color = Color(0.763613, 0.744215, 0.87312, 1)
-vertical_line_color = Color(0.762103, 0.737203, 0.800331, 1)
-background_color = Color(0.781132, 0.78444, 0.783622, 1)
-line_width = 1.0
-horizontal_spacing = 25
-vertical_spacing = 25
+horizontal_line_color = Color(0.466783, 0.428863, 0.631558, 1)
+vertical_line_color = Color(0.470938, 0.43721, 0.520515, 1)
+background_color = Color(0.337582, 0.341393, 0.340453, 1)
+line_width = 0.5
+horizontal_spacing = 10
+vertical_spacing = 10
 camera = NodePath("../Camera2D")
 
-[node name="Section" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(-178, -102)
+[node name="NNode" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
+position = Vector2(53, 13)
+color = Color(0, 1, 1, 1)
+camera_reference = NodePath("../Camera2D")
 
-[node name="Section2" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(-44, 99)
+[node name="NNode2" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
+position = Vector2(-30, -20)
+color = Color(1, 0.596211, 0.984731, 1)
+camera_reference = NodePath("../Camera2D")
 
-[node name="Section3" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(67, 88)
+[node name="NNode3" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
+position = Vector2(5, -47)
+color = Color(1, 0.681919, 0.633454, 1)
+camera_reference = NodePath("../Camera2D")
 
-[node name="Section4" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(216, -72)
+[node name="NNode4" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
+position = Vector2(-25, 30)
+color = Color(0.999426, 0.877865, 0.406086, 1)
+camera_reference = NodePath("../Camera2D")
 
-[node name="Section5" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(168, 28)
-
-[node name="Section6" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(64, -126)
-
-[node name="Section7" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(-219, 31)
-
-[node name="Section8" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(-80, 15)
-
-[node name="Section9" parent="." instance=ExtResource("1_yopc4")]
-position = Vector2(12, -34)
+[node name="NNode5" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
+position = Vector2(42, -35)
+color = Color(0.0338592, 0.938982, 0.842011, 1)
+camera_reference = NodePath("../Camera2D")
