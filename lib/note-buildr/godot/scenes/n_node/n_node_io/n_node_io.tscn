@@ -9,7 +9,7 @@ radius = 5.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mxwgo"]
 shader = ExtResource("1_kc7gr")
 shader_parameter/circle_radius = 0.15
-shader_parameter/circle_border = 0.05
+shader_parameter/circle_border = 0.0
 shader_parameter/circle_color = Color(1, 1, 1, 1)
 shader_parameter/clip_radius = 0.3
 shader_parameter/clip_border = 0.05
@@ -19,7 +19,6 @@ shader_parameter/clip_center = 0.3
 
 [node name="NNodeIO" type="Node2D" node_paths=PackedStringArray("mesh", "area", "collision_shape")]
 script = ExtResource("1_mncib")
-focused = true
 mesh = NodePath("Pivot/SphereContainer/MeshInstance2D")
 area = NodePath("Pivot/SphereContainer/Area2D")
 collision_shape = NodePath("Pivot/SphereContainer/Area2D/CollisionShape2D")

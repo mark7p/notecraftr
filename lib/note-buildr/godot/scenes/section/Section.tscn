@@ -7,23 +7,23 @@
 [ext_resource type="PackedScene" uid="uid://bmbolgca8cseq" path="res://scenes/io_bubble/io_bubble.tscn" id="5_3t0ym"]
 [ext_resource type="Shader" path="res://shaders/io_bubble_connection.gdshader" id="6_1633q"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_pejap"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_k7roo"]
 resource_local_to_scene = true
 radius = 30.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1c8jh"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m6u0s"]
 shader = ExtResource("3_avwsj")
-shader_parameter/circle_radius = 0.3
+shader_parameter/circle_radius = 0.0
 shader_parameter/circle_border = 0.0
-shader_parameter/circle_color = Color(0.783213, 0.996071, 0.875464, 1)
+shader_parameter/circle_color = Color(0.739079, 0.629356, 0.886071, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_2w5ss"]
 size = Vector2(100, 100)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_q6uhl"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iyjad"]
 shader = ExtResource("6_1633q")
 shader_parameter/scale = Vector2(0, 10)
-shader_parameter/line_input_color = Color(0.783213, 0.996071, 0.875464, 1)
+shader_parameter/line_input_color = Color(0.349835, 0.501158, 0.630081, 1)
 shader_parameter/line_output_color = Color(1, 1, 1, 1)
 shader_parameter/line_width = 0.5
 shader_parameter/dash_spacing = 0.345
@@ -50,11 +50,11 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_b0jyp"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_paw8w"]
 shader = SubResource("Shader_6nora")
-shader_parameter/circle_radius = 0.12
+shader_parameter/circle_radius = 0.0
 shader_parameter/circle_border = 0.0
-shader_parameter/circle_color = Color(0.783213, 0.996071, 0.875464, 1)
+shader_parameter/circle_color = Color(0.739079, 0.629356, 0.886071, 1)
 
 [node name="Section" type="RigidBody2D" node_paths=PackedStringArray("body_canvas", "collision_shape", "io_bubbles", "camera") groups=["sections", "static_sections"]]
 input_pickable = true
@@ -73,15 +73,14 @@ io_bubbles = [NodePath("IOBubble"), NodePath("IOBubble2")]
 camera = NodePath("Camera2D")
 
 [node name="NodeBodyCollisionShape" parent="." node_paths=PackedStringArray("canvas") instance=ExtResource("4_xh6ji")]
-scale = Vector2(1, 1)
-shape = SubResource("CircleShape2D_pejap")
+shape = SubResource("CircleShape2D_k7roo")
 canvas = NodePath("../NodeBodyCanvas")
 
 [node name="NodeBodyCanvas" type="MeshInstance2D" parent="."]
-material = SubResource("ShaderMaterial_1c8jh")
+material = SubResource("ShaderMaterial_m6u0s")
 mesh = SubResource("QuadMesh_2w5ss")
 script = ExtResource("4_d6jhk")
-color = Color(0.783213, 0.996071, 0.875464, 1)
+color = Color(0.739079, 0.629356, 0.886071, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)
@@ -96,15 +95,12 @@ section_body_canvas = NodePath("../NodeBodyCanvas")
 section_body_collision_shape = NodePath("../NodeBodyCollisionShape")
 type = 1
 
-[node name="container" parent="IOBubble2/pivot" index="0"]
-position = Vector2(40, 0)
-
 [node name="ConnectionCanvas" parent="IOBubble2/pivot/container" index="1"]
-material = SubResource("ShaderMaterial_q6uhl")
-input_color = Color(0.783213, 0.996071, 0.875464, 1)
+material = SubResource("ShaderMaterial_iyjad")
+input_color = Color(0.739079, 0.629356, 0.886071, 1)
 
 [node name="BubbleCanvas" parent="IOBubble2/pivot/container" index="2"]
-material = SubResource("ShaderMaterial_b0jyp")
-color = Color(0.783213, 0.996071, 0.875464, 1)
+material = SubResource("ShaderMaterial_paw8w")
+color = Color(0.739079, 0.629356, 0.886071, 1)
 
 [editable path="IOBubble2"]

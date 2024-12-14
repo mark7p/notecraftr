@@ -37,6 +37,8 @@ static_sections=""
 sections=""
 disabled_sections=""
 selected_sections=""
+nnode_body_area=""
+selected_nnodes=""
 
 [rendering]
 

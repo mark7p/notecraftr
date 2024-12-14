@@ -11,7 +11,7 @@ class_name BaseNNodeSphere
 
 @export var color := Color.WHITE:
     set(value):
-        if color != value:
+        if color != value: 
             color = value
             _update_color()
 

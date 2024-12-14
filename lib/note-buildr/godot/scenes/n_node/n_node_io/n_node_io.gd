@@ -24,6 +24,7 @@ func _ready() -> void:
     _check_body()
 
 func _input(event: InputEvent) -> void:
+    return
     if event is InputEventMouseMotion:
         pivot_look_at(get_global_mouse_position())
 
@@ -103,3 +104,7 @@ func _update_io_clip_center(value: float):
 
 func _update_io_clip_border(value: float):
     mesh.material.set_shader_parameter("clip_border", value)
+
+
+func get_clip_offset() -> float:
+    return abs(mesh.material.get_shader_parameter("clip_center"))
