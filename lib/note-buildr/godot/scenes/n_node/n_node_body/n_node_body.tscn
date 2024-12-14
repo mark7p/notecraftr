@@ -8,14 +8,13 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7t2bn"]
 shader = ExtResource("1_qx6if")
 shader_parameter/circle_radius = 0.3
-shader_parameter/circle_border = 0.05
+shader_parameter/circle_border = 0.0
 shader_parameter/circle_color = Color(1, 1, 1, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_qrocs"]
 
 [node name="NNodeBody" type="Node2D" node_paths=PackedStringArray("mesh", "area", "collision_shape")]
 script = ExtResource("1_odvpi")
-focused = true
 mesh = NodePath("MeshInstance2D")
 area = NodePath("Area2D")
 collision_shape = NodePath("Area2D/CollisionShape2D")

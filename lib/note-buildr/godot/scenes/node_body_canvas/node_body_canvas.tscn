@@ -5,8 +5,8 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_leebo"]
 shader = ExtResource("1_knquo")
-shader_parameter/circle_radius = 0.0
-shader_parameter/circle_border = 0.0
+shader_parameter/circle_radius = 0.3
+shader_parameter/circle_border = 0.05
 shader_parameter/circle_color = Color(1, 1, 1, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_hga0n"]
