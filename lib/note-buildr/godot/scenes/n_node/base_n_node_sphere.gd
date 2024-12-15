@@ -62,6 +62,7 @@ func _update_focus():
 
     if border_tween:
         border_tween.kill()
+        border_tween = null
 
     var actual_border = mesh.material.get_shader_parameter("circle_border") as float
     var target_border = mesh_material_border if focused else 0.0
@@ -80,6 +81,7 @@ func _update_color():
 
     if color_tween:
         color_tween.kill()
+        color_tween = null
 
     var actual_color = mesh.material.get_shader_parameter("circle_color") as Color
     var target_color = color
@@ -93,6 +95,7 @@ func _update_radius():
         return
     if radius_tween:
         radius_tween.kill()
+        radius_tween = null
 
     var target_mesh_radius = mesh_material_radius if sphere_visible else 0.0
     var actual_mesh_radius = mesh.material.get_shader_parameter("circle_radius") as float

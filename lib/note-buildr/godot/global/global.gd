@@ -4,6 +4,7 @@ signal on_frontend_message(data)
 signal send_to_frontend(data)
 var section_seaking_connection: Section
 var section_connection_candidate: Section
+var hovered_to_selected_nnode:= false
 
 var _callback_ref = JavaScriptBridge.create_callback(_message_handler)
 
