@@ -32,21 +32,21 @@ color = Color(0, 1, 1, 1)
 camera_reference = NodePath("../Camera2D")
 
 [node name="NNode2" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
-position = Vector2(-30, -20)
+position = Vector2(-21, -30)
 color = Color(1, 0.596211, 0.984731, 1)
 camera_reference = NodePath("../Camera2D")
 
 [node name="NNode3" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
-position = Vector2(5, -47)
-color = Color(1, 0.681919, 0.633454, 1)
+position = Vector2(-30, 18)
+color = Color(0.504925, 0.818173, 0.933651, 1)
 camera_reference = NodePath("../Camera2D")
 
 [node name="NNode4" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
-position = Vector2(-25, 30)
-color = Color(0.999426, 0.877865, 0.406086, 1)
+position = Vector2(-9, 46)
+color = Color(0.542826, 0.853386, 0.591138, 1)
 camera_reference = NodePath("../Camera2D")
 
 [node name="NNode5" parent="." node_paths=PackedStringArray("camera_reference") instance=ExtResource("5_p1juv")]
-position = Vector2(42, -35)
-color = Color(0.0338592, 0.938982, 0.842011, 1)
+position = Vector2(62, -30)
+color = Color(0.842282, 0.776752, 0.317922, 1)
 camera_reference = NodePath("../Camera2D")

@@ -60,6 +60,7 @@ func _update_all_canvas(callback: Callable, delay = true):
 	if delay:
 		if _canvas_update_tween:
 			_canvas_update_tween.kill()
+			_canvas_update_tween = null
 		_canvas_update_tween = create_tween()
 		_canvas_update_tween.tween_callback(_updates).set_delay(0.05)
 	else:
