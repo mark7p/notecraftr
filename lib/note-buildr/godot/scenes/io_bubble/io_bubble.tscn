@@ -42,7 +42,7 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ci2d5"]
 shader = SubResource("Shader_6nora")
-shader_parameter/circle_radius = 0.0
+shader_parameter/circle_radius = 0.12
 shader_parameter/circle_border = 0.0
 shader_parameter/circle_color = Color(1, 1, 1, 1)
 

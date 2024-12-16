@@ -12,6 +12,7 @@ const Types := preload ("res://global/types.gd")
 
 @onready var pivot: Node2D = get_node("Pivot")
 @onready var container: Node2D = get_node("Pivot/SphereContainer")
+var _rotation_tween: Tween = null
 
 
 func _ready() -> void:
@@ -21,12 +22,15 @@ func _ready() -> void:
     body.radius_updated.connect(body_radius_changed)
     body.border_updated.connect(body_border_changed)
     body.color_updated.connect(body_color_changed)
+    # body.tree_exiting.connect(queue_free)
     _check_body()
+
 
 func _input(event: InputEvent) -> void:
     return
     if event is InputEventMouseMotion:
         pivot_look_at(get_global_mouse_position())
+
 
 # Override base update methods
 func _update_focus():
@@ -66,10 +70,31 @@ func _check_body():
     _update_io_clip_border(clip_border)
     _update_io_color(circle_color)
     _update_io_position(clip_radius)
+    if type == Types.IOType.OUTPUT:
+        pivot_look_at(Vector2.LEFT + pivot.global_position)
+
+
+func reset_rotation():
+    var target_face = (Vector2.LEFT if type == Types.IOType.OUTPUT else Vector2.RIGHT)
+    pivot_look_with_animation(target_face + pivot.global_position)
 
 
 func pivot_look_at(point: Vector2):
     pivot.look_at(point)
+
+
+func pivot_look_with_animation(point: Vector2):
+    if _rotation_tween:
+        _rotation_tween.kill()
+        _rotation_tween = null
+
+    _rotation_tween = create_tween()
+    _rotation_tween.tween_method(
+        pivot_look_at,
+        container.global_position,
+        point,
+        0.3
+    ).set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
 
 
 func _update_io_radius(body_radius: float):
@@ -87,8 +112,6 @@ func _update_io_color(value: Color):
 
 
 func _update_io_position(clip_center: float):
-    if type == Types.IOType.OUTPUT:
-        clip_center *= -1
     container.position = Vector2(mesh.scale.x * clip_center, 0.0)
 
 
@@ -97,8 +120,6 @@ func _update_io_clip_radius(value: float):
 
 
 func _update_io_clip_center(value: float):
-    if type == Types.IOType.OUTPUT:
-        value *= -1
     mesh.material.set_shader_parameter("clip_center", value)
 
 

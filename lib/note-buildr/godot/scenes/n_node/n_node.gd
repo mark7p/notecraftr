@@ -1,5 +1,8 @@
+@tool
 extends RigidBody2D
 class_name NNode
+
+const Types := preload ("res://global/types.gd")
 
 @onready var body: NNodeBody = get_node("NNodeBody")
 @onready var collision_shape: CollisionShape2D = get_node("CollisionShape2D")
@@ -15,9 +18,13 @@ var touched := false
 var focused := false
 var io_position_tween: Tween = null
 var drag_offset := Vector2.ZERO
-var dragging := false
-var can_drag := false
+var body_dragging := false
+var body_can_drag := false
+var io_dragging := false
+var io_can_drag := false
 var physics_impulse_multiplier = 25
+var hovered_io: NNodeIO = null
+
 
 
 
@@ -32,6 +39,7 @@ func _ready() -> void:
         body._set_sphere_color(color)
         target_offset = body.mesh_material_radius - 0.07
         body.area.area_entered.connect(_on_body_entered)
+        body.kill_animation_finished.connect(queue_free)
 
     for io in io_children:
         io.mouse_entered.connect(io_mouse_entered)
@@ -40,9 +48,12 @@ func _ready() -> void:
         io._update_io_color(color)
         io._update_io_clip_center(target_offset)
         io._update_io_position(target_offset)
-    
-    
 
+
+
+func kill():
+    body.animate_kill()
+    
 
 func _on_body_entered(node: Node2D):
     if is_in_group("selected_nnodes"):
@@ -88,13 +99,16 @@ func _set_mouse_hovered(value: bool):
         Global.hovered_to_selected_nnode = value and self.is_in_group("selected_nnodes")
 
 
-func body_mouse_entered():
+func body_mouse_entered(_nnode):
     body_mouse_hovered = true
     _set_mouse_hovered(true)
     set_body_focus(true)
 
 
-func io_mouse_entered():
+func io_mouse_entered(nnode):
+    if nnode and not body_mouse_hovered:
+        hovered_io = nnode
+
     io_mouse_hovered = true
     _set_mouse_hovered(true)
     set_body_focus(true)
@@ -116,7 +130,7 @@ func io_mouse_exited():
             set_body_focus(mouse_hovered)
 
 
-func body_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int):
+func body_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int, _nnode):
     if not body_mouse_hovered:
         body_mouse_hovered = true
     if not mouse_hovered:
@@ -125,7 +139,10 @@ func body_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int):
         set_body_focus(mouse_hovered)
 
 
-func io_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int):
+func io_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int, nnode):
+    if nnode and not body_mouse_hovered:
+        hovered_io = nnode
+
     if body_mouse_hovered:
         io_mouse_hovered = false
         # Bypass input event to prioritize body event
@@ -190,12 +207,147 @@ func _select_nnode():
     add_to_group("selected_nnodes")
     set_body_focus(true)
     freeze = true
+    z_index = 1
 
 func _deselect_nnode():
     focused = false
     remove_from_group("selected_nnodes")
     set_body_focus(false)
     freeze = false
+    z_index = 0
+
+
+func _handle_body_mouse_button(
+    pressed: bool,
+    ctrl_pressed: bool,
+    hovered_other_node: bool,
+    is_selected: bool,
+    dragged: bool,
+    is_left: bool,
+    is_right: bool,
+):
+    if is_right and pressed and mouse_hovered:
+            kill()
+
+    # Mouse button DOWN body
+    if body_mouse_hovered and pressed:
+        drag_offset = global_position - camera_reference.get_global_mouse_position()
+        touched = true
+        body_can_drag = true
+        io_can_drag = false
+
+    # Mouse button DOWN inside
+    if mouse_hovered and pressed:
+        touched = true
+
+        if not ctrl_pressed:
+            _select_nnode()
+
+    # Mouse button UP inside
+    elif mouse_hovered and not pressed:
+        touched = false
+        body_can_drag = false
+        body_dragging = false
+        var selected_on_up = false
+
+        if ctrl_pressed and not is_selected:
+            _select_nnode()
+            selected_on_up = true
+        elif ctrl_pressed and is_selected:
+            _deselect_nnode()
+        Global.hovered_to_selected_nnode = is_selected or selected_on_up
+
+    # Mouse button DOWN outside
+    elif not mouse_hovered and pressed:
+        drag_offset = global_position - camera_reference.get_global_mouse_position()
+        touched = false
+        body_can_drag = false
+
+        if not ctrl_pressed and is_selected and hovered_other_node and not Global.hovered_to_selected_nnode:
+            _deselect_nnode()
+        elif hovered_other_node and is_selected:
+            body_can_drag = true
+
+        # Mouse button UP outside
+    elif not mouse_hovered and not pressed:
+        touched = false
+        body_can_drag = false
+        body_dragging = false
+
+        if not ctrl_pressed and is_selected and (not hovered_other_node or not dragged) :
+            _deselect_nnode()
+
+
+func _handle_io_mouse_button(
+    pressed: bool,
+    ctrl_pressed: bool,
+    hovered_other_node: bool,
+    is_selected: bool,
+    dragged: bool,
+    is_left: bool,
+    is_right: bool,
+):
+    if hovered_io and pressed and is_left and not body_mouse_hovered:
+        io_can_drag = true
+        Global.grabbed_io_input = true
+        Global.grabbed_io_nnode = hovered_io
+        Global.grabbed_io_parent_nnode = self
+        body_can_drag = false
+    elif hovered_io and not pressed and io_dragging and is_left:
+        hovered_io.reset_rotation()
+
+    if not pressed:
+        if io_dragging:
+            if Global.io_connection_candidate in  io_children:
+                Global.io_connection_candidate = null
+            for io in io_children:
+                io.reset_rotation()
+        if hovered_io:
+            Global.grabbed_io_nnode = null
+            Global.grabbed_io_input = false
+            Global.grabbed_io_parent_nnode = null
+        io_can_drag = false
+        hovered_io = null
+        io_dragging = false
+
+
+func _handle_body_mouse_motion(_event: InputEventMouseMotion):
+    if not touched and not focused:
+        return
+    
+    if not body_can_drag or io_can_drag:
+        return
+
+    body_dragging = true
+    global_position = camera_reference.get_global_mouse_position() + drag_offset
+
+
+func _handle_io_mouse_motion(_event: InputEventMouseMotion):
+
+    if io_can_drag:
+        io_dragging = true
+        var target = Global.io_connection_candidate.global_position if Global.io_connection_candidate else camera_reference.get_global_mouse_position()
+        hovered_io.pivot_look_at(target)
+    elif not io_dragging and mouse_hovered and Global.grabbed_io_nnode and Global.grabbed_io_nnode != hovered_io:
+        for io in io_children:
+            if io.type == Global.grabbed_io_nnode.type:
+                continue
+            if not (io.type in [Types.IOType.INPUT, Types.IOType.OUTPUT]):
+                continue
+            if not (Global.grabbed_io_nnode.type in [Types.IOType.INPUT, Types.IOType.OUTPUT]):
+                continue
+            io_dragging = true
+            io.pivot_look_with_animation(Global.grabbed_io_parent_nnode.global_position)
+            Global.io_connection_candidate = io
+
+    if not io_can_drag and io_dragging and not body_mouse_hovered and not io_mouse_hovered:
+        io_dragging = false
+        if Global.io_connection_candidate in  io_children:
+            Global.io_connection_candidate = null
+        for io in io_children:
+            io.reset_rotation()
+
+
 
 func _input(event: InputEvent) -> void:
     var is_motion := event is InputEventMouseMotion
@@ -205,73 +357,43 @@ func _input(event: InputEvent) -> void:
         return
 
     if is_button:
-        
+
         # Mouse button outside without interaction 
-        if not mouse_hovered and not focused:
+        if not mouse_hovered and not focused and not io_dragging:
             return
             
         var pressed = event.pressed
         var ctrl_pressed = event.ctrl_pressed
-        var hovered_other_node := _some_all_nnodes(func(nnode):return nnode.mouse_hovered)
+        var hovered_other_node := _some_all_nnodes(func(nnode):return nnode.mouse_hovered and nnode.body_mouse_hovered)
         var is_selected := self.is_in_group("selected_nnodes")
-        var dragged = dragging
+        var dragged = body_dragging
+        var is_left = event.button_index == MOUSE_BUTTON_LEFT
+        var is_right = event.button_index == MOUSE_BUTTON_RIGHT
 
-        # Mouse button DOWN body
-        if body_mouse_hovered and pressed:
-            drag_offset = global_position - camera_reference.get_global_mouse_position()
-            touched = true
-            can_drag = true
+        _handle_body_mouse_button(
+            pressed,
+            ctrl_pressed,
+            hovered_other_node,
+            is_selected,
+            dragged,
+            is_left,
+            is_right,
+        )
 
-        # Mouse button DOWN inside
-        if mouse_hovered and pressed:
-            touched = true
+        _handle_io_mouse_button(
+            pressed,
+            ctrl_pressed,
+            hovered_other_node,
+            is_selected,
+            dragged,
+            is_left,
+            is_right,
+        )
 
-            if not ctrl_pressed:
-                _select_nnode()
-    
-        # Mouse button UP inside
-        elif mouse_hovered and not pressed:
-            touched = false
-            can_drag = false
-            dragging = false
-            var selected_on_up = false
-
-            if ctrl_pressed and not is_selected:
-                _select_nnode()
-                selected_on_up = true
-            elif ctrl_pressed and is_selected:
-                _deselect_nnode()
-            Global.hovered_to_selected_nnode = is_selected or selected_on_up
-
-        # Mouse button DOWN outside
-        elif not mouse_hovered and pressed:
-            drag_offset = global_position - camera_reference.get_global_mouse_position()
-            touched = false
-            can_drag = false
-
-            if not ctrl_pressed and is_selected and hovered_other_node and not Global.hovered_to_selected_nnode:
-                _deselect_nnode()
-            elif hovered_other_node and is_selected:
-                can_drag = true
-
-         # Mouse button UP outside
-        elif not mouse_hovered and not pressed:
-            touched = false
-            can_drag = false
-            dragging = false
-
-            if not ctrl_pressed and is_selected and (not hovered_other_node or not dragged) :
-                _deselect_nnode()
-
-    elif is_motion:
-        if not touched and not focused:
-            return
         
-        if not can_drag:
-            return
-
-        dragging = true
-        global_position = camera_reference.get_global_mouse_position() + drag_offset
+    elif is_motion:
+        _handle_body_mouse_motion(event)
+        _handle_io_mouse_motion(event)
 
             
         

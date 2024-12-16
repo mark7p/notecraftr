@@ -4,9 +4,10 @@
 [ext_resource type="Script" path="res://scenes/n_node/n_node_io/n_node_io.gd" id="1_mncib"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_01052"]
+resource_local_to_scene = true
 radius = 5.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_30mk8"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p7olb"]
 shader = ExtResource("1_kc7gr")
 shader_parameter/circle_radius = 0.15
 shader_parameter/circle_border = 0.0
@@ -33,6 +34,6 @@ collision_shape = NodePath("Pivot/SphereContainer/Area2D/CollisionShape2D")
 shape = SubResource("CircleShape2D_01052")
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="Pivot/SphereContainer"]
-material = SubResource("ShaderMaterial_30mk8")
+material = SubResource("ShaderMaterial_p7olb")
 scale = Vector2(33, 33)
 mesh = SubResource("QuadMesh_uabo2")
