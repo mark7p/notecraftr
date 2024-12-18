@@ -8,7 +8,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_8qc5h"]
 radius = 12.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1q0tr"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y28ty"]
 shader = ExtResource("3_bhdfl")
 shader_parameter/scale = Vector2(0, 10)
 shader_parameter/line_input_color = Color(1, 1, 1, 1)
@@ -40,7 +40,7 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ci2d5"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gj5dn"]
 shader = SubResource("Shader_6nora")
 shader_parameter/circle_radius = 0.0
 shader_parameter/circle_border = 0.0
@@ -70,7 +70,7 @@ shape = SubResource("CircleShape2D_8qc5h")
 
 [node name="ConnectionCanvas" type="MeshInstance2D" parent="pivot/container" node_paths=PackedStringArray("bubble_canvas")]
 visible = false
-material = SubResource("ShaderMaterial_1q0tr")
+material = SubResource("ShaderMaterial_y28ty")
 position = Vector2(10, 0)
 scale = Vector2(1e-05, 10)
 mesh = SubResource("QuadMesh_8rytf")
@@ -78,7 +78,7 @@ script = ExtResource("4_eq1be")
 bubble_canvas = NodePath("../BubbleCanvas")
 
 [node name="BubbleCanvas" type="MeshInstance2D" parent="pivot/container"]
-material = SubResource("ShaderMaterial_ci2d5")
+material = SubResource("ShaderMaterial_gj5dn")
 mesh = SubResource("QuadMesh_nmpjp")
 script = ExtResource("3_k0g7a")
 radius = 0.12

@@ -30,6 +30,7 @@ signal radius_updated(value: float)
 signal focus_updated(value: bool)
 signal color_updated(value: Color)
 signal border_updated(value: float)
+signal kill_animation_finished()
 
 
 var animation_duration := 0.3
@@ -42,18 +43,18 @@ var border_tween: Tween = null
 var color_tween: Tween = null
 
 
-signal mouse_entered
+signal mouse_entered(node)
 signal mouse_exited
-signal input_event(viewport: Node, event: InputEvent, shape_idx: int)
+signal input_event(viewport: Node, event: InputEvent, shape_idx: int, nnode)
 
 
 func _initialize_base_sphere():
     mesh.material = mesh.material.duplicate()
-    area.mouse_entered.connect(func():mouse_entered.emit())
+    area.mouse_entered.connect(func():mouse_entered.emit(self))
     area.mouse_exited.connect(func():mouse_exited.emit())
     area.input_event.connect(
         func(viewport: Node, event: InputEvent, shape_idx: int
-        ):input_event.emit(viewport, event, shape_idx))
+        ):input_event.emit(viewport, event, shape_idx, self))
 
 
 func _update_focus():
@@ -88,6 +89,21 @@ func _update_color():
 
     color_tween = create_tween()
     color_tween.tween_method(_set_sphere_color, actual_color, target_color, animation_duration)
+
+
+func animate_kill():
+    if not mesh:
+        return
+    var target_radius := 0.0
+    var actual_mesh_radius = mesh.material.get_shader_parameter("circle_radius") as float
+    var actual_collision_shape_radius = collision_shape.shape.radius
+    var kill_tween = create_tween().set_parallel(true)
+
+    kill_tween.tween_method(_set_mesh_radius, actual_mesh_radius, target_radius, animation_duration
+        ).set_ease(Tween.EASE_IN).set_trans(Tween.TransitionType.TRANS_SPRING)
+    kill_tween.tween_method(_set_collision_shape_radius, actual_collision_shape_radius, target_radius, animation_duration
+        ).set_ease(Tween.EASE_IN).set_trans(Tween.TransitionType.TRANS_SPRING)
+    kill_tween.tween_callback(kill_animation_finished.emit).set_delay(animation_duration)
 
 
 func _update_radius():

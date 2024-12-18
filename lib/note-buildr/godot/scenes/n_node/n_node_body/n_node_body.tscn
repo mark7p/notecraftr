@@ -4,8 +4,9 @@
 [ext_resource type="Shader" path="res://scenes/n_node/n_node_body/n_node_body.gdshader" id="1_qx6if"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0cnrw"]
+resource_local_to_scene = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_iv4vb"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_74362"]
 shader = ExtResource("1_qx6if")
 shader_parameter/circle_radius = 0.3
 shader_parameter/circle_border = 0.0
@@ -25,7 +26,7 @@ collision_shape = NodePath("Area2D/CollisionShape2D")
 shape = SubResource("CircleShape2D_0cnrw")
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="."]
-material = SubResource("ShaderMaterial_iv4vb")
+material = SubResource("ShaderMaterial_74362")
 scale = Vector2(33, 33)
 mesh = SubResource("QuadMesh_qrocs")
 

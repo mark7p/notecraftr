@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://brop00a6d1wi7"]
+[gd_scene load_steps=5 format=3 uid="uid://brop00a6d1wi7"]
 
 [ext_resource type="Script" path="res://scenes/n_node/n_node.gd" id="1_tmgjs"]
 [ext_resource type="PackedScene" uid="uid://dc6l1b78o33g1" path="res://scenes/n_node/n_node_body/n_node_body.tscn" id="1_w6b7f"]
 [ext_resource type="PackedScene" uid="uid://cq0i4oag3o7k4" path="res://scenes/n_node/n_node_io/n_node_io.tscn" id="2_ih3bd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jp1un"]
+resource_local_to_scene = true
 
 [node name="NNode" type="RigidBody2D" node_paths=PackedStringArray("io_children") groups=["nnodes"]]
 input_pickable = true
@@ -15,11 +18,12 @@ script = ExtResource("1_tmgjs")
 io_children = [NodePath("NNodeIO"), NodePath("NNodeIO2")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-
-[node name="NNodeIO" parent="." node_paths=PackedStringArray("body") instance=ExtResource("2_ih3bd")]
-body = NodePath("../NNodeBody")
+shape = SubResource("CircleShape2D_jp1un")
 
 [node name="NNodeIO2" parent="." node_paths=PackedStringArray("body") instance=ExtResource("2_ih3bd")]
+body = NodePath("../NNodeBody")
+
+[node name="NNodeIO" parent="." node_paths=PackedStringArray("body") instance=ExtResource("2_ih3bd")]
 type = 1
 body = NodePath("../NNodeBody")
 

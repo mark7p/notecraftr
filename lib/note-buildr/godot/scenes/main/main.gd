@@ -9,20 +9,13 @@ var is_mouse_hover = false
 
 
 func _ready() -> void:
-	# connect("child_order_changed", _check_sections)
 	pass
-
 
 
 func _input(event):
 	update_mouse_drag(event)
 	update_zoom(event)
-	update_mouse_down(event)
-	pass
-
-
-func update_mouse_down(event):
-	pass
+	
 
 func update_zoom(event):
 	if event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_UP]:
@@ -36,18 +29,14 @@ func update_mouse_drag(event):
 	if event is InputEventMouseMotion:
 		is_mouse_dragging = event.button_mask in [MOUSE_BUTTON_MASK_MIDDLE, MOUSE_BUTTON_MASK_LEFT]
 		if is_mouse_dragging:
-			if event.button_mask == MOUSE_BUTTON_MASK_LEFT:
-				drag_selected_sections(event)
-			else:
+			if event.button_mask == MOUSE_BUTTON_MASK_MIDDLE:
 				drag_camera(event)
+
 
 	else:
 		if is_mouse_dragging:
 			is_mouse_dragging = false
 
-
-func drag_selected_sections(event):
-	pass
 
 
 func drag_camera(event):
