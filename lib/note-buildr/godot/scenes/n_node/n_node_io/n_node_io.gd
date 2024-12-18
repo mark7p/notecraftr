@@ -9,10 +9,21 @@ const Types := preload ("res://global/types.gd")
 
 @export_group("IO Required Nodes")
 @export var body: NNodeBody
-
+@export var connection_canvas: NNodeIOConnection
 @onready var pivot: Node2D = get_node("Pivot")
 @onready var container: Node2D = get_node("Pivot/SphereContainer")
 var _rotation_tween: Tween = null
+var connected_io: NNodeIO = null:
+    set(value):
+        if connected_io != value:
+            connected_io = value
+            _update_connection_output_color(value.color if value else color)
+
+var hovering_io: NNodeIO = null:
+    set(value):
+        if hovering_io != value:
+            hovering_io = value
+            _update_connection_output_color(value.color if value else color)
 
 
 func _ready() -> void:
@@ -94,7 +105,7 @@ func pivot_look_with_animation(point: Vector2):
         container.global_position,
         point,
         0.3
-    ).set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+    ).set_ease(Tween.EASE_OUT)
 
 
 func _update_io_radius(body_radius: float):
@@ -108,7 +119,19 @@ func _update_io_border(body_border: float):
 
 
 func _update_io_color(value: Color):
+    color = value
     mesh.material.set_shader_parameter("circle_color", value)
+    _update_connection_input_color(value)
+    if not connected_io and not hovering_io:
+        _update_connection_output_color(value)
+
+
+func _update_connection_input_color(value: Color):
+    connection_canvas.input_color = value
+
+
+func _update_connection_output_color(value: Color):
+    connection_canvas.output_color = value
 
 
 func _update_io_position(clip_center: float):
